@@ -2,6 +2,7 @@ package com.mo16.eventstoreplayground;
 
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ public class EventStoreTest {
     private EventStoreDBClient store;
 
     @Test
+    @Disabled
     public void testSend10000EventToStream() throws ExecutionException, InterruptedException {
         record TestEvent(UUID id, int index){}
 
