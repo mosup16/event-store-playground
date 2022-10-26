@@ -2,3 +2,8 @@ application:
   event-store:
       server:
         connection: esdb+discover://localhost:2113?tls=false&keepAliveTimeout=10000&keepAliveInterval=10000
+
+  subscriptions:
+    cpu-usage:
+      id: "cpu-usage-sub"
+      streamId: "cpu-usage"
