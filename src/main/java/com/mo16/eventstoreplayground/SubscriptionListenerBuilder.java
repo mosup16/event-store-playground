@@ -4,12 +4,15 @@ import com.eventstore.dbclient.ResolvedEvent;
 import com.eventstore.dbclient.Subscription;
 import com.eventstore.dbclient.SubscriptionListener;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class SubscriptionListenerBuilder {
-    private BiConsumer<Subscription, ResolvedEvent> eventHandler = (sub, event) -> {
-    };
+
+    private final Map<String, BiConsumer<Subscription, ResolvedEvent>> eventHandlers = new HashMap<>();
+
     private BiConsumer<Subscription, Throwable> errorHandler = (sub, throwable) -> {
     };
     private Consumer<Subscription> cancellationHandler = subscription -> {
@@ -19,8 +22,9 @@ public class SubscriptionListenerBuilder {
         return new SubscriptionListenerBuilder();
     }
 
-    public SubscriptionListenerBuilder onEvent(BiConsumer<Subscription, ResolvedEvent> handler) {
-        this.eventHandler = handler;
+    public SubscriptionListenerBuilder onEvent(String eventType,
+                                               BiConsumer<Subscription, ResolvedEvent> handler) {
+        eventHandlers.put(eventType, handler);
         return this;
     }
 
@@ -38,7 +42,8 @@ public class SubscriptionListenerBuilder {
         return new SubscriptionListener() {
             @Override
             public void onEvent(Subscription subscription, ResolvedEvent event) {
-                eventHandler.accept(subscription, event);
+                eventHandlers.get(event.getEvent().getEventType())
+                        .accept(subscription, event);
             }
 
             @Override
