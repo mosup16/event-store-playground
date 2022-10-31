@@ -40,4 +40,30 @@ public class EventStoreTest {
         System.out.println("time taken to publish 10000 event %sms"
                 .formatted(System.currentTimeMillis() - start));
     }
+
+    @Test
+    @Disabled
+    public void testCreateAndSendEventsTo1000Stream() {
+        record TestEvent(UUID id, int index) {
+        }
+
+        long start = System.currentTimeMillis();
+        IntStream.range(0, 1000)
+                .forEach(i -> {
+                            var event = new TestEvent(UUID.randomUUID(), i);
+                            var streamName = "testCreateAndSendEventsTo1000Stream-" + event.id();
+                            EventData eventData = EventData.builderAsJson("test-event", event)
+                                    .eventId(event.id())
+                                    .build();
+                            try {
+                                store.appendToStream(streamName, eventData);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
+
+        System.out.println("time taken to publish 1000 event %sms"
+                .formatted(System.currentTimeMillis() - start));
+    }
 }
